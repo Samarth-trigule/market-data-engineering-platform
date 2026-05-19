@@ -1,0 +1,7 @@
+requests
+pandas
+pydantic
+sqlalchemy
+pymysql
+cryptography
+tenacity

@@ -1,0 +1,56 @@
+services:
+
+  mysql:
+    image: mysql:8
+
+    container_name: market-mysql
+
+    env_file:
+      - .env
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - market-network
+
+
+  api:
+    build:
+      context: ./API
+
+    container_name: market-api
+
+    ports:
+      - "8000:8000"
+
+    networks:
+      - market-network
+
+    depends_on:
+      - mysql
+
+
+  etl:
+    build:
+      context: ./etl
+
+    container_name: market-etl
+
+    depends_on:
+      - api
+      - mysql
+
+    networks:
+      - market-network
+
+
+networks:
+  market-network:
